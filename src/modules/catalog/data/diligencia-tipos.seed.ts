@@ -1,0 +1,47 @@
+/** Catálogo legacy (IngresarDiligencia.php) — orden y textos originales */
+export const DILIGENCIA_TIPOS_SEED = [
+  { codigo: '0', etiqueta: 'ESTAMPADOS EN SISTEMA' },
+  { codigo: '1', etiqueta: 'ENCARGA EXHORTO CLIENTE' },
+  { codigo: '2', etiqueta: 'INGRESO - ROL' },
+  { codigo: '3', etiqueta: 'CUMPLASE' },
+  { codigo: '4', etiqueta: 'ENCARGO EXHORTO RECEPTOR' },
+  { codigo: '5', etiqueta: 'REITERA ENCARGO RECEPTOR' },
+  { codigo: '6', etiqueta: 'EXHORTO EN PODER DEL RECEPTOR' },
+  { codigo: '7', etiqueta: 'SE INSISTE AL RECEPTOR APURAR GESTION' },
+  { codigo: '8', etiqueta: 'BUSQUEDA NEGATIVA' },
+  { codigo: '9', etiqueta: 'SOLICITA NUEVO DOMICILIO CLIENTE' },
+  { codigo: '10', etiqueta: 'SEÑALA NUEVO DOMICILIO' },
+  { codigo: '11', etiqueta: 'BUSQUEDA POSITIVA' },
+  { codigo: '12', etiqueta: 'SOLICITA NOTIFICACION ART. 44' },
+  { codigo: '13', etiqueta: 'PENDIENTE RESOLUCION ESCRITO' },
+  { codigo: '14', etiqueta: 'NOTIFICACION POR CEDULA' },
+  { codigo: '15', etiqueta: 'NOTIFICACION PERSONAL' },
+  { codigo: '16', etiqueta: 'NOTIFICACION ART. 44' },
+  { codigo: '17', etiqueta: 'REQUERIMIENTO DE PAGO' },
+  { codigo: '18', etiqueta: 'OPOSICION AL EMBARGO' },
+  { codigo: '19', etiqueta: 'EMBARGO DE VEHICULO' },
+  { codigo: '20', etiqueta: 'SOLICITA FUERZA PUBLICA PARA EMBARGO' },
+  { codigo: '21', etiqueta: 'EMBARGO DE BIENES MUEBLES' },
+  { codigo: '22', etiqueta: 'EMBARGO DE INMUEBLE' },
+  { codigo: '23', etiqueta: 'OPOSICION AL RETIRO' },
+  { codigo: '24', etiqueta: 'SOLICITA FUERZA PUBLICA RETIRO' },
+  { codigo: '25', etiqueta: 'EMBARGO FRUSTRADO' },
+  { codigo: '26', etiqueta: 'RETIRO FRUSTRADO' },
+  { codigo: '27', etiqueta: 'SOLICITA AMPLIACION DE PLAZO' },
+  { codigo: '28', etiqueta: 'AMPLIACION DE PLAZO POR' },
+  { codigo: '29', etiqueta: 'SOLICITA AUTORIZACION GASTO DISTANCIA' },
+  { codigo: '30', etiqueta: 'SUSPENSIÓN DE EXHORTO' },
+  { codigo: '31', etiqueta: 'SOLICITA DEVOLUCION DE EXHORTO' },
+  { codigo: '32', etiqueta: 'FALTA DEVOLUCION DE EXHORTO' },
+  { codigo: '33', etiqueta: 'DEVOLUCION DE EXHORTO TRIBUNAL ORIGEN' },
+  { codigo: '34', etiqueta: 'DEVOLUCION EXHORTO SIN DILIGENCIA' },
+  { codigo: '35', etiqueta: 'DEVOLUCION EXHORTO CLIENTE' },
+  { codigo: '36', etiqueta: 'COBRADO AL CLIENTE' },
+] as const;
+
+export function formatDiligenciaLegacy(
+  codigo: string,
+  etiqueta: string,
+): string {
+  return `${codigo}.-${etiqueta}`;
+}
