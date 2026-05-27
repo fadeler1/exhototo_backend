@@ -1,0 +1,545 @@
+{
+  "info": {
+    "_postman_id": "exhorto-backend-api",
+    "name": "Exhorto Backend API",
+    "description": "API NestJS + MongoDB para tramitación de exhortos.\n\n**Uso:**\n1. Importa también el environment `Exhorto-Backend.local`.\n2. Ejecuta **Auth → Login** (guarda el token automáticamente).\n3. Usa el resto de endpoints con Bearer auth.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "exhortoId", "value": "" },
+    { "key": "diligenciaId", "value": "" },
+    { "key": "boletaReceptorId", "value": "" },
+    { "key": "boletaHonorarioId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.token) {",
+                  "        pm.collectionVariables.set('token', json.token);",
+                  "        pm.environment.set('token', json.token);",
+                  "    }",
+                  "    pm.test('Login exitoso', () => pm.response.to.have.status(200));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"pmagnere\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Compatible con legacy: también acepta `usuario` en lugar de `username`."
+          }
+        },
+        {
+          "name": "Me (usuario actual)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "Requiere perfil `TODO` (administrador).",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users"
+          }
+        },
+        {
+          "name": "Obtener usuario",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.id) pm.collectionVariables.set('userId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Administrador\",\n  \"login\": \"admin\",\n  \"email\": \"admin@ejemplo.cl\",\n  \"perfil\": \"TODO\",\n  \"password\": \"cambiar\"\n}"
+            },
+            "url": "{{baseUrl}}/users",
+            "description": "Perfiles: `TODO` | `INGRESAR`. Si no envías password, usa `cambiar`."
+          }
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Administrador Actualizado\",\n  \"password\": \"nuevaClave123\"\n}"
+            },
+            "url": "{{baseUrl}}/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/users/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "Tipos de diligencia",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/catalog/diligencias",
+            "description": "Catálogo de 37 tipos (seed automático al iniciar la app)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exhortos",
+      "item": [
+        {
+          "name": "Dashboard HOME — estadísticas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/exhortos/dashboard/stats",
+            "description": "Panel /home: resumen (total, vigente, terminado), top 12 por ciudad/abogado/tribunal/facultades, mapa por región (`porRegion`), últimos 8 exhortos. Solo agregaciones MongoDB."
+          }
+        },
+        {
+          "name": "Mover terminados a respaldo_exhorto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+                  "raw": "{\n  \"fechaDesde\": \"2024-01-01\",\n  \"fechaHasta\": \"2024-12-31\",\n  \"diligenciaCodigo\": \"2\"\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/respaldo/mover",
+                "description": "Mueve desde `exhortos` hacia `respaldo_exhorto` solo exhortos estado=0 (terminado) con al menos una diligencia en el rango indicado. `diligenciaCodigo` es opcional."
+          }
+        },
+        {
+          "name": "Buscar respaldados por fecha y estado",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/exhortos/respaldo/buscar?fechaDesde=2024-01-01&fechaHasta=2024-12-31&estado=0&diligenciaCodigo=2&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["exhortos", "respaldo", "buscar"],
+              "query": [
+                { "key": "fechaDesde", "value": "2024-01-01" },
+                { "key": "fechaHasta", "value": "2024-12-31" },
+                { "key": "estado", "value": "0", "description": "0=terminado, 1=vigente" },
+                { "key": "diligenciaCodigo", "value": "2", "description": "Opcional. Código catálogo diligencias" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Consulta documentos en `respaldo_exhorto` por fecha de diligencia y estado, sin moverlos de vuelta a `exhortos`."
+          }
+        },
+        {
+          "name": "Recuperar respaldados a exhortos",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+                  "raw": "{\n  \"fechaDesde\": \"2024-01-01\",\n  \"fechaHasta\": \"2024-12-31\",\n  \"estado\": 0,\n  \"diligenciaCodigo\": \"2\"\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/respaldo/recuperar",
+            "description": "Mueve documentos desde `respaldo_exhorto` hacia `exhortos` filtrando por fecha de diligencia y estado."
+          }
+        },
+        {
+          "name": "Buscar exhortos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/exhortos?apellidoDeudor=&nombreCliente=&ciudad=&abogado=&estado=1&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["exhortos"],
+              "query": [
+                { "key": "apellidoDeudor", "value": "", "description": "LIKE parcial" },
+                { "key": "nombreCliente", "value": "" },
+                { "key": "tribunalOrigen", "value": "", "disabled": true },
+                { "key": "rolJuicio", "value": "", "disabled": true },
+                { "key": "ciudad", "value": "" },
+                { "key": "facultades", "value": "", "disabled": true },
+                { "key": "abogado", "value": "" },
+                { "key": "estado", "value": "1", "description": "0=terminado, 1=vigente" },
+                { "key": "fechaDesde", "value": "2024-01-01", "disabled": true, "description": "ISO date. Con fechas sin diligenciaCodigo usa códigos legacy 1 y 2" },
+                { "key": "fechaHasta", "value": "2024-12-31", "disabled": true },
+                { "key": "diligenciaCodigo", "value": "2", "disabled": true, "description": "Opcional. Código catálogo diligencias" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener exhorto (con diligencias[])",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/exhortos/{{exhortoId}}",
+            "description": "Incluye el array embebido `diligencias` y `boletasReceptor`."
+          }
+        },
+        {
+          "name": "Crear exhorto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.id) pm.collectionVariables.set('exhortoId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"apellidoDeudor\": \"González\",\n  \"nombreCliente\": \"Banco Estado\",\n  \"rut\": \"12.345.678-9\",\n  \"tribunalOrigen\": \"Santiago\",\n  \"rolJuicio\": \"C-12345-2024\",\n  \"ciudad\": \"Santiago\",\n  \"facultades\": \"Notificar, embargar\",\n  \"abogado\": \"Juan Pérez\"\n}"
+            },
+            "url": "{{baseUrl}}/exhortos"
+          }
+        },
+        {
+          "name": "Actualizar exhorto",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ciudad\": \"Valparaíso\",\n  \"facultades\": \"Facultades actualizadas\"\n}"
+            },
+            "url": "{{baseUrl}}/exhortos/{{exhortoId}}"
+          }
+        },
+        {
+          "name": "Eliminar exhorto",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/exhortos/{{exhortoId}}"
+          }
+        },
+        {
+          "name": "Diligencias",
+          "item": [
+            {
+              "name": "Listar diligencias del exhorto",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/diligencias",
+                "description": "Solo el array `diligencias` embebido, ordenado por fecha."
+              }
+            },
+            {
+              "name": "Agregar diligencia",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201 || pm.response.code === 200) {",
+                      "    const json = pm.response.json();",
+                      "    const diligencias = json.diligencias || [];",
+                      "    if (diligencias.length) {",
+                      "        pm.collectionVariables.set('diligenciaId', diligencias[diligencias.length - 1].id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"2\",\n  \"fecha\": \"2024-06-15\",\n  \"observaciones\": \"Ingreso en tribunal\"\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/diligencias",
+                "description": "Códigos 34 y 35 cierran el exhorto (estado=0). Ver catálogo GET /catalog/diligencias."
+              }
+            },
+            {
+              "name": "Agregar diligencia cierre (34)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"codigo\": \"34\",\n  \"fecha\": \"2024-07-01\",\n  \"observaciones\": \"Devolución sin diligencia\"\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/diligencias"
+              }
+            },
+            {
+              "name": "Actualizar diligencia",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"observaciones\": \"Observación actualizada\",\n  \"fecha\": \"2024-06-20\"\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/diligencias/{{diligenciaId}}"
+              }
+            },
+            {
+              "name": "Eliminar diligencia",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/diligencias/{{diligenciaId}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Boletas receptor",
+          "item": [
+            {
+              "name": "Agregar boleta receptor",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201 || pm.response.code === 200) {",
+                      "    const json = pm.response.json();",
+                      "    const boletas = json.boletasReceptor || [];",
+                      "    if (boletas.length) {",
+                      "        pm.collectionVariables.set('boletaReceptorId', boletas[boletas.length - 1].id);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"receptor\": \"María Receptor\",\n  \"documento\": 12345,\n  \"monto\": 50000\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/boletas-receptor"
+              }
+            },
+            {
+              "name": "Actualizar boleta receptor",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"monto\": 55000\n}"
+                },
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/boletas-receptor/{{boletaReceptorId}}"
+              }
+            },
+            {
+              "name": "Eliminar boleta receptor",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/exhortos/{{exhortoId}}/boletas-receptor/{{boletaReceptorId}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Honorarios",
+      "item": [
+        {
+          "name": "Buscar boletas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/honorarios?ciudad=&caratula=&tipo=1&estado=0&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["honorarios"],
+              "query": [
+                { "key": "ciudad", "value": "" },
+                { "key": "abogado", "value": "", "disabled": true },
+                { "key": "caratula", "value": "", "description": "Busca en apellido o nombre cliente" },
+                { "key": "documento", "value": "", "disabled": true },
+                { "key": "tipo", "value": "1", "description": "1=honorario, 2=devolución" },
+                { "key": "estado", "value": "0", "description": "0=pendiente, 1=pagado" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener boleta",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/honorarios/{{boletaHonorarioId}}"
+          }
+        },
+        {
+          "name": "Crear boleta honorario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.id) pm.collectionVariables.set('boletaHonorarioId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exhortoId\": \"{{exhortoId}}\",\n  \"documento\": 98765,\n  \"monto\": 150000,\n  \"tipo\": 1,\n  \"pertenece\": \"Cliente ABC\",\n  \"fecha\": \"2024-06-01\"\n}"
+            },
+            "url": "{{baseUrl}}/honorarios",
+            "description": "tipo: 1=HONORARIO, 2=DEVOLUCION"
+          }
+        },
+        {
+          "name": "Crear boleta devolución",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"exhortoId\": \"{{exhortoId}}\",\n  \"documento\": 98766,\n  \"monto\": 25000,\n  \"tipo\": 2,\n  \"pertenece\": \"Receptor\",\n  \"fecha\": \"2024-06-10\"\n}"
+            },
+            "url": "{{baseUrl}}/honorarios"
+          }
+        },
+        {
+          "name": "Actualizar boleta",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 160000,\n  \"pertenece\": \"Cliente actualizado\"\n}"
+            },
+            "url": "{{baseUrl}}/honorarios/{{boletaHonorarioId}}"
+          }
+        },
+        {
+          "name": "Marcar como pagada",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/honorarios/{{boletaHonorarioId}}/pagar"
+          }
+        },
+        {
+          "name": "Eliminar boleta",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/honorarios/{{boletaHonorarioId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
