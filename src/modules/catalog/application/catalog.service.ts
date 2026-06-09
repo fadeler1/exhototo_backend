@@ -21,19 +21,48 @@ export class CatalogService implements OnModuleInit {
     await this.seedDiligenciaTipos();
   }
 
-  private async seedDiligenciaTipos() {
-    const count = await this.diligenciaTipoModel.countDocuments();
-    if (count > 0) return;
+  async syncDiligenciaTipos(): Promise<{
+    upserted: number;
+    deactivated: number;
+  }> {
+    const codigosEnSeed = DILIGENCIA_TIPOS_SEED.map((item) => item.codigo);
 
-    await this.diligenciaTipoModel.insertMany(
-      DILIGENCIA_TIPOS_SEED.map((item, index) => ({
-        codigo: item.codigo,
-        etiqueta: item.etiqueta,
-        etiquetaLegacy: formatDiligenciaLegacy(item.codigo, item.etiqueta),
-        activo: true,
-        orden: index,
-      })),
+    await Promise.all(
+      DILIGENCIA_TIPOS_SEED.map((item, index) =>
+        this.diligenciaTipoModel.updateOne(
+          { codigo: item.codigo },
+          {
+            $set: {
+              codigo: item.codigo,
+              etiqueta: item.etiqueta,
+              etiquetaLegacy: formatDiligenciaLegacy(
+                item.codigo,
+                item.etiqueta,
+              ),
+              activo: true,
+              orden: index,
+            },
+          },
+          { upsert: true },
+        ),
+      ),
     );
+
+    const deactivated = await this.diligenciaTipoModel
+      .updateMany(
+        { codigo: { $nin: codigosEnSeed } },
+        { $set: { activo: false } },
+      )
+      .exec();
+
+    return {
+      upserted: DILIGENCIA_TIPOS_SEED.length,
+      deactivated: deactivated.modifiedCount,
+    };
+  }
+
+  private async seedDiligenciaTipos() {
+    await this.syncDiligenciaTipos();
   }
 
   findDiligenciaTipos() {

@@ -2,9 +2,9 @@ import { ExhortoEstado } from '../enums/exhorto-estado.enum';
 import { ExhortoStateDomain } from './exhorto-state.domain';
 
 describe('ExhortoStateDomain', () => {
-  it('cierra el exhorto al agregar diligencia 34 o 35', () => {
+  it('cierra el exhorto al agregar diligencia 39 o 40', () => {
     expect(
-      ExhortoStateDomain.estadoAfterAddDiligencia(ExhortoEstado.VIGENTE, '34'),
+      ExhortoStateDomain.estadoAfterAddDiligencia(ExhortoEstado.VIGENTE, '39'),
     ).toBe(ExhortoEstado.TERMINADO);
   });
 
