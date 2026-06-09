@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
 import { AuthService } from './application/auth.service';
+import { PasswordRecoveryMailService } from './application/password-recovery-mail.service';
 import { AuthController } from './presentation/auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
@@ -22,7 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, PasswordRecoveryMailService, JwtStrategy],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

@@ -43,6 +43,11 @@ class EnvironmentVariables {
   @IsString()
   @IsOptional()
   CORS_ORIGINS = 'http://localhost:5173';
+
+  @IsString()
+  @IsOptional()
+  PASSWORD_RECOVERY_MAIL_URL =
+    'https://tramitadorexhorto.cl/test_mail.php';
 }
 
 export function validateEnv(config: Record<string, unknown>) {

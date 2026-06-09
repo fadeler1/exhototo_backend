@@ -16,4 +16,9 @@ export default () => ({
     password: process.env.MYSQL_PASSWORD ?? '',
     database: process.env.MYSQL_DATABASE ?? '',
   },
+  passwordRecovery: {
+    mailUrl:
+      process.env.PASSWORD_RECOVERY_MAIL_URL ??
+      'https://tramitadorexhorto.cl/test_mail.php',
+  },
 });
