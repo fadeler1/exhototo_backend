@@ -46,8 +46,38 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  PASSWORD_RECOVERY_MAIL_URL =
-    'https://tramitadorexhorto.cl/test_mail.php';
+  MAIL_PROVIDER?: string;
+
+  @IsString()
+  @IsOptional()
+  MAIL_FROM = 'Tramitador Exhorto <no-reply@tramitadorexhorto.cl>';
+
+  @IsString()
+  @IsOptional()
+  RESEND_API_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_HOST?: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(65535)
+  @IsOptional()
+  SMTP_PORT = 587;
+
+  @IsString()
+  @IsOptional()
+  SMTP_SECURE?: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_USER?: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_PASSWORD?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {

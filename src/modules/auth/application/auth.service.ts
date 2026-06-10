@@ -74,6 +74,7 @@ export class AuthService {
     await this.passwordRecoveryMailService.sendRecoveryCode(
       user.email,
       codigo,
+      user.nombre,
     );
 
     return {

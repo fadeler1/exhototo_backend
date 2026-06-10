@@ -50,13 +50,14 @@ describe('AuthService password recovery', () => {
 
     const result = await service.requestPasswordRecovery(user.email);
 
-    expect(result.message).toContain('Se enviará un correo');
+    expect(result.message).toContain('Se envió un correo');
     expect(userRepository.update).toHaveBeenCalledWith(user.id, {
       autorizacion: expect.any(Number),
     });
     expect(passwordRecoveryMailService.sendRecoveryCode).toHaveBeenCalledWith(
       user.email,
       expect.any(Number),
+      user.nombre,
     );
   });
 
