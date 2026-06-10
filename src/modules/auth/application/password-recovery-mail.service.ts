@@ -23,8 +23,8 @@ export class PasswordRecoveryMailService {
   ): Promise<void> {
     const provider = this.resolveProvider();
     const from = this.configService.getOrThrow<string>('mail.from');
-    const subject = 'Recuperación de contraseña - Tramitador Exhorto';
-    const html = buildRecoveryEmailHtml(nombre, codigo);
+    const subject = 'Código de recuperación - Tramitador Exhorto';
+    const html = buildRecoveryEmailHtml(codigo);
 
     try {
       if (provider === 'resend') {

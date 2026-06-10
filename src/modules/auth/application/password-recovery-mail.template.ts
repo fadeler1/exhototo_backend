@@ -1,33 +1,74 @@
-export function buildRecoveryEmailHtml(nombre: string, codigo: number): string {
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+export function buildRecoveryEmailHtml(codigo: number): string {
+  const codigoHtml = escapeHtml(String(codigo));
+
   return `<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body style="margin:0;padding:0;background-color:#ededed;font-family:Arial,Helvetica,sans-serif;">
-    <table border="0" cellspacing="0" bgcolor="#ededed" width="100%">
-      <tr>
-        <td style="padding:24px 0;">
-          <table border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ffffff" width="600" style="max-width:600px;">
-            <tr>
-              <td style="padding:20px;color:#003366;font-size:12px;">
-                <strong>Hola ${nombre},</strong>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 20px 20px;color:#003366;font-size:11px;line-height:1.6;">
-                <p>Recibimos una solicitud para restablecer su contraseña en Tramitador Exhorto.</p>
-                <p>Su código de verificación es:</p>
-                <p style="font-size:24px;font-weight:bold;letter-spacing:4px;margin:16px 0;">${codigo}</p>
-                <p>Ingrese este código en el sitio para crear una nueva contraseña.</p>
-                <p>Si usted no solicitó este cambio, puede ignorar este correo.</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperación de contraseña</title>
+</head>
+<body style="margin:0;padding:0;background-color:#ededed;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#ededed">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:8px;overflow:hidden;">
+          <tr>
+            <td style="padding:20px 24px;background:linear-gradient(145deg,#081428 0%,#0d2142 55%,#132a52 100%);">
+              <p style="margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#eb5e28;">
+                A &amp; G Asociados
+              </p>
+              <h1 style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;color:#ffffff;">
+                Recuperación de contraseña
+              </h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px;font-family:Arial,Helvetica,sans-serif;color:#003366;">
+              <p style="margin:0 0 12px;font-size:14px;line-height:1.5;">
+                <strong>Hola,</strong>
+              </p>
+              <p style="margin:0 0 20px;font-size:13px;line-height:1.6;color:#334155;text-align:justify;">
+                Recibimos una solicitud para restablecer tu contraseña. Ingresa el siguiente código
+                en la pantalla de recuperación de la aplicación.
+              </p>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center" style="padding:16px 12px;background-color:#f4f6fa;border:1px solid #dce3ee;border-radius:8px;">
+                    <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#5c6578;">
+                      Tu código de verificación
+                    </p>
+                    <p style="margin:0;font-size:32px;font-weight:700;letter-spacing:0.35em;color:#0d2142;font-family:Consolas,Monaco,monospace;">
+                      ${codigoHtml}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:20px 0 0;font-size:12px;line-height:1.5;color:#64748b;">
+                Si no solicitaste este cambio, ignora este mensaje. El código es de un solo uso.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px 24px;background-color:#f8fafc;border-top:1px solid #e2e8f0;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.4;color:#94a3b8;text-align:center;">
+                Tramitador Exhorto · Mensaje automático, no responder
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
 </html>`;
 }
