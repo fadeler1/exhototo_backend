@@ -179,7 +179,7 @@ export class BoletaHonorarioRepository implements IBoletaHonorarioRepository {
     estado: BoletaHonorarioEstado,
   ): Promise<BoletaHonorarioEntity | null> {
     const doc = await this.model
-      .findByIdAndUpdate(id, { estado }, { new: true })
+      .findByIdAndUpdate(id, { estado }, { returnDocument: 'after' })
       .exec();
     return doc ? this.toEntity(doc) : null;
   }
@@ -193,7 +193,7 @@ export class BoletaHonorarioRepository implements IBoletaHonorarioRepository {
       update.exhortoId = new Types.ObjectId(data.exhortoId);
     }
     const doc = await this.model
-      .findByIdAndUpdate(id, update, { new: true })
+      .findByIdAndUpdate(id, update, { returnDocument: 'after' })
       .exec();
     return doc ? this.toEntity(doc) : null;
   }

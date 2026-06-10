@@ -20,11 +20,26 @@ export class PasswordRecoveryMailService {
       CODIGO: String(codigo),
     });
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body,
-    });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+        signal: AbortSignal.timeout(15_000),
+      });
+    } catch (error) {
+      const cause =
+        error instanceof Error && 'cause' in error
+          ? String(error.cause)
+          : String(error);
+      this.logger.error(
+        `No se pudo conectar con el servicio de correo (${url}): ${cause}`,
+      );
+      throw new BadGatewayException(
+        'No se pudo enviar el correo de recuperación. Intente más tarde.',
+      );
+    }
 
     if (!response.ok) {
       this.logger.error(

@@ -222,7 +222,7 @@ export class ExhortoRepository implements IExhortoRepository {
     data: UpdateExhortoData,
   ): Promise<ExhortoEntity | null> {
     const doc = await this.model
-      .findByIdAndUpdate(id, data, { new: true })
+      .findByIdAndUpdate(id, data, { returnDocument: 'after' })
       .exec();
     return doc ? this.toEntity(doc) : null;
   }
@@ -244,7 +244,7 @@ export class ExhortoRepository implements IExhortoRepository {
           $push: { diligencias: diligencia },
           $set: { estado: nuevoEstado },
         },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;
@@ -270,7 +270,7 @@ export class ExhortoRepository implements IExhortoRepository {
           'diligencias._id': new Types.ObjectId(diligenciaId),
         },
         { $set: setFields },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;
@@ -288,7 +288,7 @@ export class ExhortoRepository implements IExhortoRepository {
           $pull: { diligencias: { _id: new Types.ObjectId(diligenciaId) } },
           $set: { estado: nuevoEstado },
         },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;
@@ -302,7 +302,7 @@ export class ExhortoRepository implements IExhortoRepository {
       .findByIdAndUpdate(
         exhortoId,
         { $push: { boletasReceptor: boleta } },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;
@@ -327,7 +327,7 @@ export class ExhortoRepository implements IExhortoRepository {
           'boletasReceptor._id': new Types.ObjectId(boletaId),
         },
         { $set: setFields },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;
@@ -341,7 +341,7 @@ export class ExhortoRepository implements IExhortoRepository {
       .findByIdAndUpdate(
         exhortoId,
         { $pull: { boletasReceptor: { _id: new Types.ObjectId(boletaId) } } },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .exec();
     return doc ? this.toEntity(doc) : null;

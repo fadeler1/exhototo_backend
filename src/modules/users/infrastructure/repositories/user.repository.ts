@@ -89,7 +89,7 @@ export class UserRepository implements IUserRepository {
     if (data.password) update.mustChangePassword = false;
 
     const doc = await this.model
-      .findByIdAndUpdate(id, update, { new: true })
+      .findByIdAndUpdate(id, update, { returnDocument: 'after' })
       .exec();
     return doc ? this.toEntity(doc) : null;
   }
