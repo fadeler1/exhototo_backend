@@ -1,4 +1,10 @@
-import { IsNumber, IsString, Min, MinLength } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class CreateBoletaReceptorDto {
   @IsString()
@@ -12,4 +18,8 @@ export class CreateBoletaReceptorDto {
   @IsNumber()
   @Min(0)
   monto: number;
+
+  @IsOptional()
+  @IsString()
+  diligenciaEtiquetaLegacy?: string;
 }

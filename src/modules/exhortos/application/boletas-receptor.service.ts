@@ -27,8 +27,7 @@ export class BoletasReceptorService {
       receptor: dto.receptor,
       documento: dto.documento,
       monto: dto.monto,
-      diligenciaCodigo: '',
-      diligenciaEtiquetaLegacy: '',
+      ...this.mapDiligenciaEtiquetaLegacy(dto.diligenciaEtiquetaLegacy),
     });
 
     if (!updated) throw new NotFoundException('Exhorto no encontrado');
@@ -41,7 +40,7 @@ export class BoletasReceptorService {
     dto: UpdateBoletaReceptorDto,
   ) {
     await this.exhortosService.findById(exhortoId);
-    const { diligenciaCodigo, ...rest } = dto;
+    const { diligenciaCodigo, diligenciaEtiquetaLegacy, ...rest } = dto;
     const update = { ...rest };
 
     if (diligenciaCodigo) {
@@ -52,6 +51,11 @@ export class BoletasReceptorService {
         diligenciaCodigo: tipo.codigo,
         diligenciaEtiquetaLegacy: tipo.etiquetaLegacy,
       });
+    } else if (diligenciaEtiquetaLegacy !== undefined) {
+      Object.assign(
+        update,
+        this.mapDiligenciaEtiquetaLegacy(diligenciaEtiquetaLegacy),
+      );
     }
 
     const updated = await this.exhortoRepository.updateBoletaReceptor(
@@ -62,6 +66,14 @@ export class BoletasReceptorService {
 
     if (!updated) throw new NotFoundException('Boleta receptor no encontrada');
     return updated;
+  }
+
+  private mapDiligenciaEtiquetaLegacy(text?: string) {
+    const etiqueta = text?.trim() ?? '';
+    return {
+      diligenciaCodigo: etiqueta ? '0' : '',
+      diligenciaEtiquetaLegacy: etiqueta,
+    };
   }
 
   async remove(exhortoId: string, boletaId: string) {

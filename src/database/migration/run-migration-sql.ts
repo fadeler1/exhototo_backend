@@ -27,6 +27,7 @@ function parseArgs(argv: string[]): MigrationOptions & { sqlDir: string } {
     forceUsers: argv.includes('--force-users'),
     sequential: argv.includes('--sequential'),
     includeRespaldo: argv.includes('--include-respaldo'),
+    noBundle,
     bundleFile,
     sqlDir,
   };

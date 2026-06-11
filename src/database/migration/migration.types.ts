@@ -7,6 +7,8 @@ export interface MigrationOptions {
   sequential?: boolean;
   /** Dump phpMyAdmin multi-tabla (ej. ctr17658_EXHORTO.sql) */
   bundleFile?: string;
+  /** Fuerza archivos sueltos (EXHORTO.sql, DILIGENCIA.sql, etc.) */
+  noBundle?: boolean;
   /** Incluye respaldo_exhorto / respaldo_diligencia (histórico; no es la base activa). */
   includeRespaldo?: boolean;
 }

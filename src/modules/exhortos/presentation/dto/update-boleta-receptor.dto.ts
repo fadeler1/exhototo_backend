@@ -25,4 +25,9 @@ export class UpdateBoletaReceptorDto {
   @IsOptional()
   @IsString()
   diligenciaCodigo?: string;
+
+  /** Texto libre de diligencia/observación (equivalente a DILIGENCIA en MySQL legacy). */
+  @IsOptional()
+  @IsString()
+  diligenciaEtiquetaLegacy?: string;
 }

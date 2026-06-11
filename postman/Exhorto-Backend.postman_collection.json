@@ -407,7 +407,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"receptor\": \"María Receptor\",\n  \"documento\": 12345,\n  \"monto\": 50000\n}"
+                  "raw": "{\n  \"receptor\": \"PEDRO SILVA\",\n  \"documento\": 8853,\n  \"monto\": 44231,\n  \"diligenciaEtiquetaLegacy\": \"NOTIF. ART. 44 / REEMBOLSO GASTO\"\n}"
                 },
                 "url": "{{baseUrl}}/exhortos/{{exhortoId}}/boletas-receptor"
               }
@@ -421,7 +421,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"monto\": 55000\n}"
+                  "raw": "{\n  \"monto\": 55000,\n  \"diligenciaEtiquetaLegacy\": \"NOTIF. ART. 44 / REEMBOLSO GASTO\"\n}"
                 },
                 "url": "{{baseUrl}}/exhortos/{{exhortoId}}/boletas-receptor/{{boletaReceptorId}}"
               }

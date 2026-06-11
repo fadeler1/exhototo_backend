@@ -69,10 +69,11 @@ export class SqlToMongoMigration {
   }
 
   private loadDataset(dir: string, options: MigrationOptions): LegacyDataset {
-    const bundlePath = resolveSqlBundlePath(dir, options.bundleFile);
-
-    if (bundlePath) {
-      return this.loadFromBundle(bundlePath, options);
+    if (!options.noBundle) {
+      const bundlePath = resolveSqlBundlePath(dir, options.bundleFile);
+      if (bundlePath) {
+        return this.loadFromBundle(bundlePath, options);
+      }
     }
 
     return this.loadFromSeparateFiles(dir);
