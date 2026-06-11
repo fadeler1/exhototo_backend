@@ -21,12 +21,7 @@ export class CatalogService implements OnModuleInit {
     await this.seedDiligenciaTipos();
   }
 
-  async syncDiligenciaTipos(): Promise<{
-    upserted: number;
-    deactivated: number;
-  }> {
-    const codigosEnSeed = DILIGENCIA_TIPOS_SEED.map((item) => item.codigo);
-
+  async syncDiligenciaTipos(): Promise<{ upserted: number }> {
     await Promise.all(
       DILIGENCIA_TIPOS_SEED.map((item, index) =>
         this.diligenciaTipoModel.updateOne(
@@ -48,17 +43,7 @@ export class CatalogService implements OnModuleInit {
       ),
     );
 
-    const deactivated = await this.diligenciaTipoModel
-      .updateMany(
-        { codigo: { $nin: codigosEnSeed } },
-        { $set: { activo: false } },
-      )
-      .exec();
-
-    return {
-      upserted: DILIGENCIA_TIPOS_SEED.length,
-      deactivated: deactivated.modifiedCount,
-    };
+    return { upserted: DILIGENCIA_TIPOS_SEED.length };
   }
 
   private async seedDiligenciaTipos() {

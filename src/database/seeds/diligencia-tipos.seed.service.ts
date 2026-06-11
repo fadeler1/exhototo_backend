@@ -10,7 +10,7 @@ export class DiligenciaTiposSeedService {
   async seed() {
     const result = await this.catalogService.syncDiligenciaTipos();
     this.logger.log(
-      `Catálogo diligencia_tipos sincronizado → upserted: ${result.upserted}, desactivados: ${result.deactivated}`,
+      `Catálogo diligencia_tipos sincronizado → upserted: ${result.upserted}`,
     );
     return result;
   }
